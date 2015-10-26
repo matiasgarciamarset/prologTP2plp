@@ -12,6 +12,9 @@ listaNats(X, Y, []) :- X > Y.
 listaNats(X, X, [X]).
 listaNats(X, Y, [X|T]) :- X < Y, Z is X + 1, listaNats(Z, Y, T).
 
+%MATIAS:
+% Esta bien hacer X + 1 cuando es "?Nats" ??? 
+
 %%% Ejercicio 2
 
 % nPiezasDeCada(+Cant, +Tamaños, -Piezas), que instancia a Piezas con una lista que contiene 
@@ -21,6 +24,8 @@ listaNats(X, Y, [X|T]) :- X < Y, Z is X + 1, listaNats(Z, Y, T).
 % Asume que Tamaños no tiene repetidos.
 nPiezasDeCada(_, [], []).
 nPiezasDeCada(N, [L|K], [H|T]) :- H = pieza(L, N), nPiezasDeCada(N, K, T).
+
+%MATIAS: Yo ubiese puesto nPiezasDeCada(N, [L|K], [pieza(L, N)|T]) :-  nPiezasDeCada(N, K, T). es igual?
 
 %%% Ejercicio 3
 
@@ -38,6 +43,10 @@ resumenPiezas(S, P) :-
 	min_list(S, M), delete(S, M, D), length(S, A), length(D, B), L is A - B,
 	resumenPiezas(D, Q), nPiezasDeCada(L, [M], W),
 	append(W, Q, P).
+
+%MATIAS:
+%resumenPiezas([], []).
+%resumenPiezas([X|Y|Z], [pieza(X,Y)|W]) :- resumenPiezas(Z,W).
 
 
 % ####################################
