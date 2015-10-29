@@ -33,11 +33,29 @@ nPiezasDeCada(N, [L|K], [H|T]) :- H = pieza(L, N), nPiezasDeCada(N, K, T).
 % unifica L2 con L1 sin los elementos que matcheen con Elem.
 
 % Hay una manera mas linda de hacer esto?
+% resumenPiezas([], []).
+% resumenPiezas(S, P) :-
+% 	min_list(S, M), delete(S, M, D), length(S, A), length(D, B), L is A - B,
+% 	resumenPiezas(D, Q), nPiezasDeCada(L, [M], W),
+% 	append(W, Q, P).
+
+
+
+%cuenta la cantidad de apariciones de un elemento en una lista
+%countAt(?,+,?)
+countAt([],_,Y) :- Y = 0.
+countAt([H|T],X,Y) :- X = H ,   countAt(T,X,Z), Y is Z+1.
+countAt([H|T],X,Y) :- dif(X , H) ,   countAt(T,X,Z), Y is Z.
+
+% 1 unifico la pieza con el numero y su cantidad
+% 2 cuenta la cantidad de veces que aparece el elemento en la lista completa
+% 3 borro el elemento y sus repeticiones en la lista
+% 4 llamo recursivamente con el resto de las piezas y elementos.
+%resumenPiezas(+,-)
 resumenPiezas([], []).
-resumenPiezas(S, P) :-
-	min_list(S, M), delete(S, M, D), length(S, A), length(D, B), L is A - B,
-	resumenPiezas(D, Q), nPiezasDeCada(L, [M], W),
-	append(W, Q, P).
+resumenPiezas([H|T],[X|XS]) :-  X = (H,W), countAt([H|T],H,W), delete([H|T],H,Q), resumenPiezas(Q,XS). 
+
+
 
 
 % ####################################
