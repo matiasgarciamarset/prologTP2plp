@@ -150,7 +150,7 @@ construir2(X,Y,Z) :- term_hash( (X,Y) ,H), recorded(H,V,_), Z = V .
 construir2(X,Y,Z) :- term_hash( (X,Y) ,H), \+ recorded(H,_,_ ),  construir2work(X,Y,Z),  recorda(H, Z  ,_).
 
 construir2work(0,[],[]).
-construir2work(T,[X|XS],[A|B]) :- (P,G) = X,  between(P,T,N), divmod(N,P,C,R) , R =:= 0  , C =< G ,A = (P,C), L is T-N , construir2(L,XS,B).
+construir2work(T,[X|XS],[A|B]) :- pieza(P,G) = X,  between(P,T,N), divmod(N,P,C,R) , R =:= 0  , C =< G ,A = pieza(P,C), L is T-N , construir2(L,XS,B).
 construir2work(T,[_|XS],Q) :- construir2(T,XS,Q).
 
 
@@ -163,7 +163,7 @@ construir2work(T,[_|XS],Q) :- construir2(T,XS,Q).
 % todosConstruir1(+Total, +Piezas, -Soluciones, -N), donde Soluciones representa una lista con todas las
 %  soluciones de longitud Total obtenidas con construir1/3, y N indica la cantidad de soluciones totales.
 
-todosConstruir1(_, _, _, _):- findall(X,construir1(T,P,X),Z),  length(Z, N) ..
+todosConstruir1(T, P, Z, N):- findall(X,construir1(T,P,X),Z),  length(Z, N) .
 
 
 %%% Ejercicio 9
