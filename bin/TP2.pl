@@ -143,6 +143,9 @@ construir1(T, P, S) :- generar(T, P, S), cumpleLimite(P, S).
 
 
 %esta es la version dinamica, utiliza registros para no recalcular subresultados
+% term_hash me da una key en base a el predicado (X,Y) para generar el indice en la base de datos
+% recorded se fija si esta almacenado un resultaod con ese indice
+% recorda hace el store de un predicado con una key determinada.
 construir2(X,Y,Z) :- term_hash( (X,Y) ,H), recorded(H,V,_), Z = V .
 construir2(X,Y,Z) :- term_hash( (X,Y) ,H), \+ recorded(H,_,_ ),  construir2work(X,Y,Z),  recorda(H, Z  ,_).
 
