@@ -160,7 +160,7 @@ construir2work(T,[_|XS],Q) :- construir2(T,XS,Q).
 % todosConstruir1(+Total, +Piezas, -Soluciones, -N), donde Soluciones representa una lista con todas las
 %  soluciones de longitud Total obtenidas con construir1/3, y N indica la cantidad de soluciones totales.
 
-todosConstruir1(_, _, _, _):- fail.
+todosConstruir1(_, _, _, _):- findall(X,construir1(T,P,X),Z),  length(Z, N) ..
 
 
 %%% Ejercicio 9
