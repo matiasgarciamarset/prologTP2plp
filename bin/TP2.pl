@@ -122,7 +122,36 @@ construir1(T, P, S) :- generar(T, P, S), cumpleLimite(P, S).
 %  definiciones dinámicas para persistir los cálculos auxiliares realizados y evitar repetirlos. 
 %  No se espera que las soluciones aparezcan en el mismo orden entre construir1/3 y construir2/3, pero sí, sean las mismas.
 
- construir2(_,_,_):- fail.
+%implemente esta funcion, calcula los resultados sin duplicados. 
+% me resulto mas utiil usar las tuplas, despues para pasar a piezas es una boludez
+
+%explicacion 
+% 1 - extraigo cantidad y valor de pieza
+% 2 - tomo todos los valores entre el valor de la pieza y la suma total que quiero generar
+% 3 - divido el valor que quiero sumar, por el valor de la pieza, Eso me genera un cociente C  y un resto R 
+% 4 - valido que la division de resto 0, 
+% 5 - valido que tenga la cantidad de piezas necesarias de ese largo
+% 6 - genero la pieza, con el valor de la original P pero utilizo C piezas con ese valor
+% 7 - calculo cuanta longitud me queda cubrir
+% 8 - llamo recursivamente con las piezas de otra longitud, y para cubrir el resto de espacio que queda. 
+%construir2(0,[],[]).
+%                                 1     -         2      -       3         -    4     -    5   -   6     -   7      -    8
+%construir2(T,[X|XS],[A|B]) :- (P,G) = X,  between(P,T,N), divmod(N,P,C,R) , R =:= 0  , C =< G ,A = (P,C), L is T-N ,  construir2(XS,L,B).
+%construir2(T,[_|XS],Q) :- construir2(XS,T,Q).
+%construir2([(2,3),(1,10)],10,X).
+%construir2([(2,3),(1,10)],2,X).
+%construir2([(2,3),(1,10)],6,X).
+
+
+
+%esta es la version dinamica, utiliza registros para no recalcular subresultados
+construir2(X,Y,Z) :- term_hash( (X,Y) ,H), recorded(H,V,_), Z = V .
+construir2(X,Y,Z) :- term_hash( (X,Y) ,H), \+ recorded(H,_,_ ),  construir2work(X,Y,Z),  recorda(H, Z  ,_).
+
+construir2work(0,[],[]).
+construir2work(T,[X|XS],[A|B]) :- (P,G) = X,  between(P,T,N), divmod(N,P,C,R) , R =:= 0  , C =< G ,A = (P,C), L is T-N , construir2(L,XS,B).
+construir2work(T,[_|XS],Q) :- construir2(T,XS,Q).
+
 
 % ####################################
 % Comparación de resultados y tiempos
