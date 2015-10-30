@@ -38,14 +38,13 @@ nPiezasDeCada(N, [L|K], [H|T]) :- H = pieza(L, N), nPiezasDeCada(N, K, T).
 % unifica L2 con L1 sin los elementos que matcheen con Elem.
 
 % Hay una manera mas linda de hacer esto?
-% resumenPiezas([], []).
-% resumenPiezas(S, P) :-
-% 	min_list(S, M), delete(S, M, D), length(S, A), length(D, B), L is A - B,
-% 	resumenPiezas(D, Q), nPiezasDeCada(L, [M], W),
-% 	append(W, Q, P).
+resumenPiezas([], []).
+resumenPiezas(S, P) :-
+	min_list(S, M), delete(S, M, D), length(S, A), length(D, B), L is A - B,
+	resumenPiezas(D, Q), nPiezasDeCada(L, [M], W),
+	append(W, Q, P).
 
-
-
+/*
 %cuenta la cantidad de apariciones de un elemento en una lista
 %countAt(?,+,?)
 countAt([],_,Y) :- Y = 0.
@@ -65,7 +64,7 @@ resumenPiezas([H|T],[X|XS]) :-  X = (H,W), countAt([H|T],H,W), delete([H|T],H,Q)
 %MATIAS:
 %resumenPiezas([], []).
 %resumenPiezas([X|Y|Z], [pieza(X,Y)|W]) :- resumenPiezas(Z,W).
-
+*/
 
 % ####################################
 % Enfoque naïve
