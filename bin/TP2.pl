@@ -143,7 +143,6 @@ construir1(T, P, S) :- generar(T, P, S), cumpleLimite(P, S).
 %construir2([(2,3),(1,10)],6,X).
 
 
-
 %esta es la version dinamica, utiliza registros para no recalcular subresultados
 construir2(X,Y,Z) :- term_hash( (X,Y) ,H), recorded(H,V,_), Z = V .
 construir2(X,Y,Z) :- term_hash( (X,Y) ,H), \+ recorded(H,_,_ ),  construir2work(X,Y,Z),  recorda(H, Z  ,_).
@@ -170,7 +169,13 @@ todosConstruir1(_, _, _, _):- fail.
 % todosConstruir2(+Total, +Piezas, -Soluciones, -N), donde Soluciones representa una lista con todas 
 %  las soluciones de longitud Total obtenidas con construir2/3, y N indica la cantidad de soluciones totales.
 
-todosConstruir2(_, _, _, _):- fail.
+
+
+
+todosConstruir2(T, P, Z, N) :- findall(X,construir2(T,P,X),Z),  length(Z, N) .
+
+
+
 
 
 % ####################################
