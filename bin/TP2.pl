@@ -12,9 +12,6 @@ listaNats(X, Y, []) :- X > Y.
 listaNats(X, X, [X]).
 listaNats(X, Y, [X|T]) :- X < Y, Z is X + 1, listaNats(Z, Y, T).
 
-%MATIAS:
-% Esta bien hacer X + 1 cuando es "?Nats" ??? 
-
 %%% Ejercicio 2
 
 % nPiezasDeCada(+Cant, +Tamaños, -Piezas), que instancia a Piezas con una lista que contiene 
@@ -59,8 +56,6 @@ countAt([H|T],X,Y) :- dif(X , H) ,   countAt(T,X,Z), Y is Z.
 resumenPiezas([], []).
 resumenPiezas([H|T],[X|XS]) :-  X = (H,W), countAt([H|T],H,W), delete([H|T],H,Q), resumenPiezas(Q,XS). 
 
-
-
 %MATIAS:
 %resumenPiezas([], []).
 %resumenPiezas([X|Y|Z], [pieza(X,Y)|W]) :- resumenPiezas(Z,W).
@@ -73,20 +68,27 @@ resumenPiezas([H|T],[X|XS]) :-  X = (H,W), countAt([H|T],H,W), delete([H|T],H,Q)
 %%% Ejercicio 4
 
 % Predicado auxiliar:
-% sumList(?L, ?N), donde L es una lista de enteros positivos y N representa
-% su suma. Similar a sum_list, pero reversible.
-sumList([], 0).
-sumList([H|T], N) :- nonvar(N), between(1, N, H), Q is N - H, sumList(T, Q).
-sumList([H|T], N) :- ground([H|T]), sumList(T, X), N is X + H.
-sumList(L, N) :- var(N), between(1, inf, N), sumList(L, N).
+% isOrdered(+L): Tiene exito sii L esta ordenada.
+isOrdered([]).
+isOrdered([H|T]) :- min_list([H|T], H), isOrdered(T).
+
+% Predicado auxiliar:
+% sumOPListFrom(-L, +N, +F): Unifica L con una lista ordenada de enteros positivos
+% cuya suma sea N y cuyo primer elemento sea menor o igual a F.
+sumOPListFrom([], 0, _).
+sumOPListFrom([H|T], N, F) :- between(F, N, H), Q is N - H, sumOPListFrom(T, Q, H).
+
+% Predicado auxiliar:
+% sumOPList(?L, ?N): Unifica L, una lista ordenada de enteros positivos,
+% con la suma de sus elementos igual a N.
+sumOPList(L, N) :- nonvar(N), var(L), sumOPListFrom(L, N, 1).
+sumOPList(L, N) :- nonvar(L), isOrdered(L), sum_list(L, N).
+sumOPList(L, N) :- var(L), var(N), between(1, inf, N), sumOPList(L, N).
 
 % generar(+Total,+Piezas,-Solución), donde Solución representa una lista de piezas
 %  cuyos valores suman Total. Aquí no se pide controlar que la cantidad de cada pieza
 %  esté acorde con la disponibilidad.
-
-% Este puede generar varias soluciones iguales. Esto esta bien? Si no,
-% hay que modificar sumList para que solo devuelva listas ordenadas.
-generar(T, _, S) :- sumList(L, T), resumenPiezas(L, S).
+generar(T, _, S) :- sumOPList(L, T), resumenPiezas(L, S).
 
 %%% Ejercicio 5 
 
@@ -140,7 +142,6 @@ construir1(T, P, S) :- generar(T, P, S), cumpleLimite(P, S).
 %construir2([(2,3),(1,10)],10,X).
 %construir2([(2,3),(1,10)],2,X).
 %construir2([(2,3),(1,10)],6,X).
-
 
 %esta es la version dinamica, utiliza registros para no recalcular subresultados
 % term_hash me da una key en base a el predicado (X,Y) para generar el indice en la base de datos
@@ -239,7 +240,6 @@ construir2work(SUMA,PIEZAS,[X|XS]) :- SUMA>0,  generar2(SUMA,PIEZAS,ACTUAL,TOMO,
 
 %% construir2work(T,[_|XS],Q) :- construir2work(T,XS,Q).
 
-
 % ####################################
 % Comparación de resultados y tiempos
 % ####################################
@@ -251,20 +251,12 @@ construir2work(SUMA,PIEZAS,[X|XS]) :- SUMA>0,  generar2(SUMA,PIEZAS,ACTUAL,TOMO,
 
 todosConstruir1(T, P, Z, N):- findall(X,construir1(T,P,X),Z),  length(Z, N) .
 
-
 %%% Ejercicio 9
 
 % todosConstruir2(+Total, +Piezas, -Soluciones, -N), donde Soluciones representa una lista con todas 
 %  las soluciones de longitud Total obtenidas con construir2/3, y N indica la cantidad de soluciones totales.
 
-
-
-
 todosConstruir2(T, P, Z, N) :- findall(X,construir2(T,P,X),Z),  length(Z, N) .
-
-
-
-
 
 % ####################################
 % Patrones
