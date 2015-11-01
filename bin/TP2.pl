@@ -147,16 +147,19 @@ construir1(T, P, S) :- generar(T, P, S), cumpleLimite(P, S).
 % term_hash me da una key en base a el predicado (X,Y) para generar el indice en la base de datos
 % recorded se fija si esta almacenado un resultaod con ese indice
 % recorda hace el store de un predicado con una key determinada.
-construir2(X,Y,Z) :- term_hash( (X,Y) ,H), recorded(H,V,_), Z = V .
-construir2(X,Y,Z) :- term_hash( (X,Y) ,H), \+ recorded(H,_,_ ),  construir2work(X,Y,Z),  recorda(H, Z  ,_).
 
+
+construir2(SUMA,PIEZAS,RESULTADO) :- construir2dinamico(SUMA,PIEZAS,COMPRIMIDO), piezasEnLista(COMPRIMIDO,RESULTADO).
+
+construir2dinamico(X,Y,Z) :- term_hash( (X,Y) ,H), recorded(H,V,_), Z = V .
+construir2dinamico(X,Y,Z) :- term_hash( (X,Y) ,H), \+ recorded(H,_,_ ),  construir2work(X,Y,Z),  recorda(H, Z  ,_).
 
 
 sinPiezasIgualesContiguas([]).
 sinPiezasIgualesContiguas([_]).
 sinPiezasIgualesContiguas([X,Y|ZS]) :- pieza(A,_) = X, pieza(C,_) = Y , A =\= C, sinPiezasIgualesContiguas([Y|ZS])  .
 
-piezasEnLista([],_).
+piezasEnLista([],[]).
 piezasEnLista([P|PS],[X|XS]) :- pieza(VAL,CANT) = P, CANT =:= 1 , X = VAL, piezasEnLista(PS,XS). 
 piezasEnLista([P|PS],[X|XS]) :- pieza(VAL,CANT) = P, CANT > 1 , X = VAL , CANTMENOS is CANT - 1 , 
 				piezasEnLista( [ pieza(VAL,CANTMENOS) | PS] , XS).
@@ -182,7 +185,7 @@ construir2work(SUMA,PIEZAS,[X|XS]) :- SUMA>0,
 				CANT =:= 0 , 
 				select(ACTUAL,PIEZAS,RESTOPIEZAS),
 				X = TOMO,
-				construir2(RESTO,RESTOPIEZAS,XS),
+				construir2dinamico(RESTO,RESTOPIEZAS,XS),
 				sinPiezasIgualesContiguas([X|XS]).
 
 
@@ -191,7 +194,7 @@ construir2work(SUMA,PIEZAS,[X|XS]) :- SUMA>0,  generar2(SUMA,PIEZAS,ACTUAL,TOMO,
 				CANT > 0 , 
 				select(ACTUAL,PIEZAS,REEMPLAZO,RESTOPIEZAS),
 				X = TOMO,
-				construir2(RESTO,RESTOPIEZAS,XS),
+				construir2dinamico(RESTO,RESTOPIEZAS,XS),
 				sinPiezasIgualesContiguas([X|XS]).
 
 %% construir2work(T,XS,[A|B]) :-   member(X,XS),
