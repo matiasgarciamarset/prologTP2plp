@@ -271,4 +271,26 @@ todosConstruir2(T, P, Z, N) :- findall(X,construir2(T,P,X),Z),  length(Z, N) .
 %  en los términos definidos anteriormente y, además, sus piezas respeten el patrón indicado en Patrón. 
 %  Se sugiere definir un predicado tienePatrón(+Lista, ?Patrón) que decida si Lista presenta el Patrón especificado.
 
-construirConPatron(_, _, _, _):- fail.
+construirConPatron(TOTAL,PIEZAS,PATRON,SOLUCION):- construir2(TOTAL,PIEZAS,SOLUCION), tienePatron(PATRON,SOLUCION).
+
+
+tienePatron([],[]). 
+tienePatron(X,Y) :-           length(X,XLEN),
+			      length(Y,YLEN), 			      
+			      divmod(YLEN,XLEN,COSIENTE,RESTO),
+			      RESTO =:= 0,
+			      COSIENTE > 1,
+		              append(HEADSOLUTION,TAILPATTERN,Y),
+			      length(HEADSOLUTION,XLEN),
+			      unifiable(X,HEADSOLUTION,_),
+			      X=HEADSOLUTION,
+			      tienePatron(X,TAILPATTERN).
+			      
+tienePatron(X,Y) :- length(X,XLEN),
+			      length(Y,YLEN), 			      
+			      divmod(YLEN,XLEN,COSIENTE,RESTO),
+			      RESTO =:= 0,
+			      COSIENTE =:= 1,
+		              append(HEADSOLUTION,_,Y),
+			      length(HEADSOLUTION,XLEN),
+			      unifiable(X,HEADSOLUTION,_).
