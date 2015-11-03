@@ -294,3 +294,7 @@ tienePatron(X,Y) :- length(X,XLEN),
 		              append(HEADSOLUTION,_,Y),
 			      length(HEADSOLUTION,XLEN),
 			      unifiable(X,HEADSOLUTION,_).
+			      
+% La siguiente funcion es para test:
+
+generaok(T,Z) :- findall(X,generar(T,_,X),Z) .
