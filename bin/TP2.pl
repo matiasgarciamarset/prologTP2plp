@@ -22,7 +22,6 @@ listaNats(X, Y, [X|T]) :- X < Y, Z is X + 1, listaNats(Z, Y, T).
 nPiezasDeCada(_, [], []).
 nPiezasDeCada(N, [L|K], [H|T]) :- H = pieza(L, N), nPiezasDeCada(N, K, T).
 
-%MATIAS: Yo ubiese puesto nPiezasDeCada(N, [L|K], [pieza(L, N)|T]) :-  nPiezasDeCada(N, K, T). es igual?
 
 %%% Ejercicio 3
 
@@ -55,12 +54,7 @@ countAt([H|T],X,Y) :- dif(X , H) ,   countAt(T,X,Z), Y is Z.
 %resumenPiezas(+,-)
 resumenPiezas([], []).
 resumenPiezas([H|T],[X|XS]) :-  X = (H,W), countAt([H|T],H,W), delete([H|T],H,Q), resumenPiezas(Q,XS). 
-
-%MATIAS:
-%resumenPiezas([], []).
-%resumenPiezas([X|Y|Z], [pieza(X,Y)|W]) :- resumenPiezas(Z,W).
 */
-
 % ####################################
 % Enfoque naïve
 % ####################################
@@ -109,9 +103,26 @@ cumpleLimite(Piezas, Solucion) :- piezasALista(Piezas, A), piezasALista(Solucion
 
 %%% Ejercicio 6
 
+construirwork(0,_,[]).
+construirwork(SUMA,PIEZAS,[X|XS]) :- SUMA>0,
+				      generar2(SUMA,PIEZAS,ACTUAL,TOMO,REEMPLAZO,RESTO), 	
+				pieza(_,CANT) = REEMPLAZO, 
+				CANT =:= 0 , 
+				select(ACTUAL,PIEZAS,RESTOPIEZAS),
+				X = TOMO,
+				construirwork(RESTO,RESTOPIEZAS,XS),
+				sinPiezasIgualesContiguas([X|XS]).
+construirwork(SUMA,PIEZAS,[X|XS]) :- SUMA>0,  generar2(SUMA,PIEZAS,ACTUAL,TOMO,REEMPLAZO,RESTO), 
+				pieza(_,CANT) = REEMPLAZO, 
+				CANT > 0 , 
+				select(ACTUAL,PIEZAS,REEMPLAZO,RESTOPIEZAS),
+				X = TOMO,
+				construirwork(RESTO,RESTOPIEZAS,XS),
+				sinPiezasIgualesContiguas([X|XS]).
+
 % construir1(+Total,+Piezas,-Solución), donde Solución representa una lista de piezas cuyos valores 
 %  suman Total y, además, las cantidades utilizadas de cada pieza no exceden los declarados en Piezas.
-construir1(T, P, S) :- generar(T, P, S), cumpleLimite(P, S).
+construir1(T, P, S) :- construirwork(T, P, S2), piezasEnLista(S2,S).
 
 % ####################################
 % Enfoque dinámico
