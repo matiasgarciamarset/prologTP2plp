@@ -57,40 +57,44 @@
 
 :- end_tests(ejercicio5).
 
-:- begin_tests(ejercicio6).
+% NOTAR que los tests del ejecicio8 y ejercicio9 son los mismos salvo que utilizando la funcion construir1 y construir2, respectivamente.
+% Esto se debe a que de ambos deberian retornar los mismos resultados.
+% Abajo de cada test se puede observar comentado el tiempo de ejecucion. 
 
-	test(casonormal1) :- construir1(10,[pieza(2,2),pieza(1,2),pieza(3,2)],[pieza(2, 2), pieza(3, 2)]).
+% Aqui tambien se testea el 6
+:- begin_tests(ejercicio8).
 
-	test(casonormal2) :- construir1(30,[pieza(2,2),pieza(1,2),pieza(3,2),pieza(4,2),pieza(5,2),pieza(7,2)],[pieza(2, 2), pieza(1, 2), pieza(3, 2), pieza(4, 2), pieza(5, 2)]).
+	test(casonormal0) :- todosConstruir2(5,[pieza(1,3),pieza(2,2)],[[1, 1, 1, 2],[2, 2, 1],[1, 2, 2],[1, 2, 1, 1],[1, 1, 2, 1],[2, 1, 1, 1],[2, 1, 2]]).
+	%Tiempo: 
 
-	%Esta comentado porque tarda mucho
-	%test(casolento1) :- construir1(250,[pieza(4,2),pieza(5,2),pieza(7,2),pieza(9,2),pieza(8,1),pieza(10,2),pieza(40,10),pieza(50,6),pieza(11,6)],[pieza(4, 2), pieza(5, 2), pieza(7, 2), pieza(9, 2), pieza(8, 1), pieza(10, 2), pieza(50, 1), pieza(11, 1), pieza(50, 1), pieza(11, 1), pieza(50, 1)] ).
+	test(casonormal1) :- todosConstruir2(10,[pieza(2,2),pieza(1,2),pieza(3,2)],[[3, 1, 3, 2, 1],[3, 1, 3, 1, 2],[3, 1, 2, 3, 1],[3, 1, 2, 1, 3],[3, 2, 1, 1, 3],[3, 2, 3, 1, 1],[3, 2, 3, 2],[3, 2, 1, 3, 1],[3, 1, 1, 3, 2],[3, 1, 1, 2, 3],[3, 2, 2, 3],[1, 3, 2, 1, 3],[1, 3, 2, 3, 1],[1, 3, 1, 3, 2],[1, 3, 1, 2, 3],[1, 2, 1, 3, 3],[1, 2, 3, 3, 1],[1, 2, 3, 1, 3],[1, 3, 3, 1, 2],[1, 3, 3, 2, 1],[2, 3, 1, 3, 1],[2, 3, 1, 1, 3],[2, 3, 2, 3],[2, 1, 3, 1, 3],[2, 1, 3, 3, 1],[2, 3, 3, 2],[2, 3, 3, 1, 1],[2, 1, 1, 3, 3],[3, 3, 1, 2, 1],[3, 3, 2, 1, 1],[3, 3, 1, 1, 2],[3, 3, 2, 2],[1, 1, 3, 2, 3],[1, 1, 2, 3, 3],[1, 1, 3, 3, 2],[2, 2, 3, 3]],36).
+	%Tiempo: 
 
-	%Esta comentado porque tarda mucho
-	%test(casolento2) :- construir1(500,[pieza(2,2),pieza(1,200),pieza(3,2),pieza(4,2),pieza(5,2),pieza(7,2),pieza(9,2),pieza(8,1),pieza(10,2),pieza(40,10),pieza(50,6),pieza(11,6)],[pieza(2, 2), pieza(1, 200), pieza(3, 2), pieza(4, 2), pieza(5, 2), pieza(7, 2), pieza(9, 2), pieza(8, 1), pieza(10, 2), pieza(40, 1), pieza(50, 1), pieza(11, 1), pieza(50, 1), pieza(11, 1), pieza(50, 1)]).
+	test(casonormal2) :- todosConstruir2(30,[pieza(2,2),pieza(1,2),pieza(3,2),pieza(4,2),pieza(5,2),pieza(7,2)],[[2, 2, 1, 1, 3, 3, 5, 4, 4, 5], [2, 2, 1, 1, 3, 3, 4, 5, 4, 5], [2, 2, 1, 1, 3, 3, 4, 7, 7], [2, 2, 1, 1, 3, 3, 4, 5, 5, 4], [2, 2, 1, 1, 3, 3, 7, 7, 4], [2, 2, 1, 1, 3, 3, 5, 5, 4, 4], [2, 2, 1, 1, 3, 3, 4, 4, 5, 5]],7).
+	%Tiempo: 
 
-:- end_tests(ejercicio6).
+	test(casonormal3) :- todosConstruir2(30,[pieza(5,2),pieza(7,2),pieza(9,2),pieza(8,1),pieza(10,2)],[[10, 7, 8, 5],[10, 7, 5, 8],[10, 5, 8, 7],[10, 5, 10, 5],[10, 5, 7, 8],[10, 8, 5, 7],[10, 8, 7, 5],[10, 5, 5, 10],[9, 7, 9, 5],[9, 7, 5, 9],[9, 5, 9, 7],[9, 5, 7, 9],[7, 10, 5, 8],[7, 10, 8, 5],[7, 9, 5, 9],[7, 5, 9, 9],[7, 5, 8, 10],[7, 5, 10, 8],[7, 8, 5, 10],[7, 8, 10, 5],[7, 9, 9, 5],[5, 10, 7, 8],[5, 10, 8, 7],[5, 10, 5, 10],[5, 9, 7, 9],[5, 7, 10, 8],[5, 7, 8, 10],[5, 7, 9, 9],[5, 10, 10, 5],[5, 8, 7, 10],[5, 8, 10, 7],[5, 9, 9, 7],[10, 10, 5, 5],[8, 10, 7, 5],[8, 10, 5, 7],[8, 7, 10, 5],[8, 7, 5, 10],[8, 5, 10, 7],[8, 5, 7, 10],[9, 9, 7, 5],[9, 9, 5, 7],[5, 5, 10, 10]],42).
+	%Tiempo: 
 
-:- begin_tests(ejercicio7).
+:- end_tests(ejercicio8).
 
-	test(casonormal1) :- construir2(10,[pieza(2,2),pieza(1,2),pieza(3,2)],[pieza(2, 2), pieza(3, 2)]).
+% Aqui tambien se testea el 7
+:- begin_tests(ejercicio9).
 
-	test(casonormal2) :- construir2(30,[pieza(2,2),pieza(1,2),pieza(3,2),pieza(4,2),pieza(5,2),pieza(7,2)],[pieza(2, 2), pieza(1, 2), pieza(3, 2), pieza(4, 2), pieza(5, 2)]).
+	test(casonormal0) :- todosConstruir2(5,[pieza(1,3),pieza(2,2)],[[1, 1, 1, 2],[2, 2, 1],[1, 2, 2],[1, 2, 1, 1],[1, 1, 2, 1],[2, 1, 1, 1],[2, 1, 2]]).
+	%Tiempo: 
 
-	test(casolento1) :- construir2(250,[pieza(4,2),pieza(5,2),pieza(7,2),pieza(9,2),pieza(8,1),pieza(10,2),pieza(40,10),pieza(50,6),pieza(11,6)],[pieza(4, 2), pieza(5, 2), pieza(7, 2), pieza(9, 2), pieza(8, 1), pieza(10, 2), pieza(50, 1), pieza(11, 1), pieza(50, 1), pieza(11, 1), pieza(50, 1)] ).
+	test(casonormal1) :- todosConstruir2(10,[pieza(2,2),pieza(1,2),pieza(3,2)],[[3, 1, 3, 2, 1],[3, 1, 3, 1, 2],[3, 1, 2, 3, 1],[3, 1, 2, 1, 3],[3, 2, 1, 1, 3],[3, 2, 3, 1, 1],[3, 2, 3, 2],[3, 2, 1, 3, 1],[3, 1, 1, 3, 2],[3, 1, 1, 2, 3],[3, 2, 2, 3],[1, 3, 2, 1, 3],[1, 3, 2, 3, 1],[1, 3, 1, 3, 2],[1, 3, 1, 2, 3],[1, 2, 1, 3, 3],[1, 2, 3, 3, 1],[1, 2, 3, 1, 3],[1, 3, 3, 1, 2],[1, 3, 3, 2, 1],[2, 3, 1, 3, 1],[2, 3, 1, 1, 3],[2, 3, 2, 3],[2, 1, 3, 1, 3],[2, 1, 3, 3, 1],[2, 3, 3, 2],[2, 3, 3, 1, 1],[2, 1, 1, 3, 3],[3, 3, 1, 2, 1],[3, 3, 2, 1, 1],[3, 3, 1, 1, 2],[3, 3, 2, 2],[1, 1, 3, 2, 3],[1, 1, 2, 3, 3],[1, 1, 3, 3, 2],[2, 2, 3, 3]],36).
+	%Tiempo: 
 
-	test(casolento2) :- construir2(500,[pieza(2,2),pieza(1,200),pieza(3,2),pieza(4,2),pieza(5,2),pieza(7,2),pieza(9,2),pieza(8,1),pieza(10,2),pieza(40,10),pieza(50,6),pieza(11,6)],[pieza(2, 2), pieza(1, 200), pieza(3, 2), pieza(4, 2), pieza(5, 2), pieza(7, 2), pieza(9, 2), pieza(8, 1), pieza(10, 2), pieza(40, 1), pieza(50, 1), pieza(11, 1), pieza(50, 1), pieza(11, 1), pieza(50, 1)]).
+	test(casonormal2) :- todosConstruir2(30,[pieza(2,2),pieza(1,2),pieza(3,2),pieza(4,2),pieza(5,2),pieza(7,2)],[[2, 2, 1, 1, 3, 3, 5, 4, 4, 5], [2, 2, 1, 1, 3, 3, 4, 5, 4, 5], [2, 2, 1, 1, 3, 3, 4, 7, 7], [2, 2, 1, 1, 3, 3, 4, 5, 5, 4], [2, 2, 1, 1, 3, 3, 7, 7, 4], [2, 2, 1, 1, 3, 3, 5, 5, 4, 4], [2, 2, 1, 1, 3, 3, 4, 4, 5, 5]],7).
+	%Tiempo: 
 
-:- end_tests(ejercicio7).
+	test(casonormal3) :- todosConstruir2(30,[pieza(5,2),pieza(7,2),pieza(9,2),pieza(8,1),pieza(10,2)],[[10, 7, 8, 5],[10, 7, 5, 8],[10, 5, 8, 7],[10, 5, 10, 5],[10, 5, 7, 8],[10, 8, 5, 7],[10, 8, 7, 5],[10, 5, 5, 10],[9, 7, 9, 5],[9, 7, 5, 9],[9, 5, 9, 7],[9, 5, 7, 9],[7, 10, 5, 8],[7, 10, 8, 5],[7, 9, 5, 9],[7, 5, 9, 9],[7, 5, 8, 10],[7, 5, 10, 8],[7, 8, 5, 10],[7, 8, 10, 5],[7, 9, 9, 5],[5, 10, 7, 8],[5, 10, 8, 7],[5, 10, 5, 10],[5, 9, 7, 9],[5, 7, 10, 8],[5, 7, 8, 10],[5, 7, 9, 9],[5, 10, 10, 5],[5, 8, 7, 10],[5, 8, 10, 7],[5, 9, 9, 7],[10, 10, 5, 5],[8, 10, 7, 5],[8, 10, 5, 7],[8, 7, 10, 5],[8, 7, 5, 10],[8, 5, 10, 7],[8, 5, 7, 10],[9, 9, 7, 5],[9, 9, 5, 7],[5, 5, 10, 10]],42).
+	%Tiempo: 
+	
+:- end_tests(ejercicio9).
 
-:- begin_tests(ejercicio8y9).
+:- begin_tests(ejercicio10).
 
-	test(casonormal1) :- construir2(10,[pieza(2,2),pieza(1,2),pieza(3,2)],[pieza(2, 2), pieza(3, 2)]).
-
-	test(casonormal2) :- construir2(30,[pieza(2,2),pieza(1,2),pieza(3,2),pieza(4,2),pieza(5,2),pieza(7,2)],[pieza(2, 2), pieza(1, 2), pieza(3, 2), pieza(4, 2), pieza(5, 2)]).
-
-	test(casolento1) :- construir2(250,[pieza(4,2),pieza(5,2),pieza(7,2),pieza(9,2),pieza(8,1),pieza(10,2),pieza(40,10),pieza(50,6),pieza(11,6)],[pieza(4, 2), pieza(5, 2), pieza(7, 2), pieza(9, 2), pieza(8, 1), pieza(10, 2), pieza(50, 1), pieza(11, 1), pieza(50, 1), pieza(11, 1), pieza(50, 1)] ).
-
-	test(casolento2) :- construir2(500,[pieza(2,2),pieza(1,200),pieza(3,2),pieza(4,2),pieza(5,2),pieza(7,2),pieza(9,2),pieza(8,1),pieza(10,2),pieza(40,10),pieza(50,6),pieza(11,6)],[pieza(2, 2), pieza(1, 200), pieza(3, 2), pieza(4, 2), pieza(5, 2), pieza(7, 2), pieza(9, 2), pieza(8, 1), pieza(10, 2), pieza(40, 1), pieza(50, 1), pieza(11, 1), pieza(50, 1), pieza(11, 1), pieza(50, 1)]).
-
-:- end_tests(ejercicio8y9).
+:- end_tests(ejercicio10).
