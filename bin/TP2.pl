@@ -208,51 +208,6 @@ construir2work(SUMA,PIEZAS,[X|XS]) :- SUMA>0,  generar2(SUMA,PIEZAS,ACTUAL,TOMO,
 				construir2dinamico(RESTO,RESTOPIEZAS,XS),
 				sinPiezasIgualesContiguas([X|XS]).
 
-%% construir2work(T,XS,[A|B]) :-   member(X,XS),
-%% 			        pieza(P,G) = X,  
-%% 				between(P,T,N), 
-%% 				divmod(N,P,C,R) , 
-%% 				R =:= 0  , 
-%% 				C =:= G ,
-%% 				A = pieza(P,C), 
-%% 				L is T-N ,
-%% 				select(X,XS,XXS),
-%% 				construir2work(L,XXS,B),
-%% 				sinPiezasIgualesContiguas([A|B]).
-
-%% construir2work(T,XS,[A|B]) :-   member(X,XS),
-%% 			        pieza(P,G) = X,  
-%% 				between(P,T,N), 
-%% 				divmod(N,P,C,R) , 
-%% 				R =:= 0  , 
-%% 				C < G ,
-%% 				A = pieza(P,C), 
-%% 				L is T-N ,
-%% 				W is G-C,
-%% 				select(X,XS,pieza(P,W),XXS),
-%% 				construir2work(L,XXS,B),
-%% 				sinPiezasIgualesContiguas([A|B]).
-
-%% construir2work(T,[XS],[A|B]) :- pieza(P,G) = X,  
-%% 				  between(P,T,N), 
-%% 				  divmod(N,P,C,R) , 
-%% 				  R =:= 0  , 
-%% 				  C =:= G ,
-%% 				  A = pieza(P,C), 
-%% 				  L is T-N , 
-%% 				  W is G-C,
-%% 				  construir2work(L,[pieza(P,W)|XS],B).
-%% construir2work(T,[X|XS],[A|B]) :- pieza(P,G) = X,  
-%% 				  between(P,T,N), 
-%% 				  divmod(N,P,C,R) , 
-%% 				  R =:= 0  , 
-%% 				  C < G ,
-%% 				  A = pieza(P,C), 
-%% 				  L is T-N , 
-%% 				  W is G-C,
-%% 				  construir2work(L,[pieza(P,W)|XS],b).
-
-%% construir2work(T,[_|XS],Q) :- construir2work(T,XS,Q).
 
 % ####################################
 % Comparación de resultados y tiempos
