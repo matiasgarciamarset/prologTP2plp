@@ -1,3 +1,4 @@
+
 % ####################################
 % Calentando motores
 % ####################################
@@ -146,67 +147,33 @@ construir1(T, P, S) :- construirwork(T, P, S2), piezasEnLista(S2,S).
 % 6 - genero la pieza, con el valor de la original P pero utilizo C piezas con ese valor
 % 7 - calculo cuanta longitud me queda cubrir
 % 8 - llamo recursivamente con las piezas de otra longitud, y para cubrir el resto de espacio que queda. 
-%construir2(0,[],[]).
-%                                 1     -         2      -       3         -    4     -    5   -   6     -   7      -    8
-%construir2(T,[X|XS],[A|B]) :- (P,G) = X,  between(P,T,N), divmod(N,P,C,R) , R =:= 0  , C =< G ,A = (P,C), L is T-N ,  construir2(XS,L,B).
-%construir2(T,[_|XS],Q) :- construir2(XS,T,Q).
-%construir2([(2,3),(1,10)],10,X).
-%construir2([(2,3),(1,10)],2,X).
-%construir2([(2,3),(1,10)],6,X).
-
-%esta es la version dinamica, utiliza registros para no recalcular subresultados
-% term_hash me da una key en base a el predicado (X,Y) para generar el indice en la base de datos
-% recorded se fija si esta almacenado un resultaod con ese indice
-% recorda hace el store de un predicado con una key determinada.
-
-
-construir2(SUMA,PIEZAS,RESULTADO) :- construir2dinamico(SUMA,PIEZAS,COMPRIMIDO), piezasEnLista(COMPRIMIDO,RESULTADO).
-
-construir2dinamico(X,Y,Z) :- term_hash( (X,Y) ,H), recorded(H,V,_), Z = V .
-construir2dinamico(X,Y,Z) :- term_hash( (X,Y) ,H), \+ recorded(H,_,_ ),  construir2work(X,Y,Z),  recorda(H, Z  ,_).
 
 
 sinPiezasIgualesContiguas([]).
 sinPiezasIgualesContiguas([_]).
-sinPiezasIgualesContiguas([X,Y|ZS]) :- pieza(A,_) = X, pieza(C,_) = Y , A =\= C, sinPiezasIgualesContiguas([Y|ZS])  .
+sinPiezasIgualesContiguas([pieza(A,_),pieza(C,_)|ZS]) :-  A =\= C, sinPiezasIgualesContiguas([pieza(C,_)|ZS])  .
 
 piezasEnLista([],[]).
 piezasEnLista([P|PS],[X|XS]) :- pieza(VAL,CANT) = P, CANT =:= 1 , X = VAL, piezasEnLista(PS,XS). 
 piezasEnLista([P|PS],[X|XS]) :- pieza(VAL,CANT) = P, CANT > 1 , X = VAL , CANTMENOS is CANT - 1 , 
 				piezasEnLista( [ pieza(VAL,CANTMENOS) | PS] , XS).
 
-%generar2(+SUMA,+PIEZAS,-ACTUAL,-REEMPLAZO,-RESTO)
-generar2( SUMA, PIEZAS,PACTUAL, PTOMO,PRESTO, SUMARESTO) :-  length(PIEZAS,LEN), 
-					   LEN>0, 
-					   member(PACTUAL,PIEZAS), 
-					       pieza(P,G) = PACTUAL, 
-					       between(P,SUMA,N), 
-					       divmod(N,P,C,R), 
-					       R =:= 0, 
-					       C =< G, 
-					       RESTOPIEZAS is G - C,
-					       PRESTO = pieza(P,RESTOPIEZAS), 
-					       PTOMO = pieza(P,C),
-					       SUMARESTO is SUMA-N.
-
-construir2work(0,_,[]).
-construir2work(SUMA,PIEZAS,[X|XS]) :- SUMA>0,
-				      generar2(SUMA,PIEZAS,ACTUAL,TOMO,REEMPLAZO,RESTO), 	
-				pieza(_,CANT) = REEMPLAZO, 
-				CANT =:= 0 , 
-				select(ACTUAL,PIEZAS,RESTOPIEZAS),
-				X = TOMO,
-				construir2dinamico(RESTO,RESTOPIEZAS,XS),
-				sinPiezasIgualesContiguas([X|XS]).
+construir2worker(0,_,[]). 
+construir2worker(SUMA,PIEZAS,[X|XS])  :- member(pieza(P,G),PIEZAS), 
+					       between(1,G,N),  
+					       DIFF  is G - N,
+					       SUMARESTO is SUMA-(N*P),
+					       PRESTO = pieza(P,DIFF), 
+					       X = pieza(P,N),
+					       select( pieza(P,G),PIEZAS,PRESTO,PIEZASRESTO),
+ 					       construir2worker(SUMARESTO,PIEZASRESTO,XS).
 
 
-construir2work(SUMA,PIEZAS,[X|XS]) :- SUMA>0,  generar2(SUMA,PIEZAS,ACTUAL,TOMO,REEMPLAZO,RESTO), 
-				pieza(_,CANT) = REEMPLAZO, 
-				CANT > 0 , 
-				select(ACTUAL,PIEZAS,REEMPLAZO,RESTOPIEZAS),
-				X = TOMO,
-				construir2dinamico(RESTO,RESTOPIEZAS,XS),
-				sinPiezasIgualesContiguas([X|XS]).
+dynamic con/3.
+con(S,P,L) :- construir2worker(S,P,L), sinPiezasIgualesContiguas(L), asserta(con(S,P,L) ).
+
+
+
 
 
 % ####################################
@@ -225,41 +192,42 @@ todosConstruir1(T, P, Z, N):- findall(X,construir1(T,P,X),Z),  length(Z, N) .
 % todosConstruir2(+Total, +Piezas, -Soluciones, -N), donde Soluciones representa una lista con todas 
 %  las soluciones de longitud Total obtenidas con construir2/3, y N indica la cantidad de soluciones totales.
 
-todosConstruir2(T, P, Z, N) :- findall(X,construir2(T,P,X),Z),  length(Z, N) .
+todosConstruir2(T, P, Z, N) :- findall(X,con(T,P,X),Z),  length(Z, N) .
+
 
 % ####################################
 % Patrones
 % ####################################
 
 %%% Ejercicio 10
-
 % construirConPatron(+Total, +Piezas, ?Patrón, -Solución) será verdadero cuando Solución sea una solución factible 
 %  en los términos definidos anteriormente y, además, sus piezas respeten el patrón indicado en Patrón. 
 %  Se sugiere definir un predicado tienePatrón(+Lista, ?Patrón) que decida si Lista presenta el Patrón especificado.
 
 construirConPatron(TOTAL,PIEZAS,PATRON,SOLUCION):- construir2(TOTAL,PIEZAS,SOLUCION), tienePatron(PATRON,SOLUCION).
 
-
-tienePatron([],[]). 
-tienePatron(X,Y) :-           length(X,XLEN),
-			      length(Y,YLEN), 			      
-			      divmod(YLEN,XLEN,COSIENTE,RESTO),
-			      RESTO =:= 0,
-			      COSIENTE > 1,
-		              append(HEADSOLUTION,TAILPATTERN,Y),
-			      length(HEADSOLUTION,XLEN),
-			      unifiable(X,HEADSOLUTION,_),
-			      X=HEADSOLUTION,
-			      tienePatron(X,TAILPATTERN).
+tienePatron(P,P).
+tienePatron(P,L) :- length(P,N), length(L,N2), not(N >= N2), append(LI,LD,L), length(LI,N), tienePatron(P,LI), tienePatron(P,LD). 
+%% tienePatron([],[]). 
+%% tienePatron(X,Y) :-           length(X,XLEN),
+%% 			      length(Y,YLEN), 			      
+%% 			      divmod(YLEN,XLEN,COSIENTE,RESTO),
+%% 			      RESTO =:= 0,
+%% 			      COSIENTE > 1,
+%% 		              append(HEADSOLUTION,TAILPATTERN,Y),
+%% 			      length(HEADSOLUTION,XLEN),
+%% 			      unifiable(X,HEADSOLUTION,_),
+%% 			      X=HEADSOLUTION,
+%% 			      tienePatron(X,TAILPATTERN).
 			      
-tienePatron(X,Y) :- length(X,XLEN),
-			      length(Y,YLEN), 			      
-			      divmod(YLEN,XLEN,COSIENTE,RESTO),
-			      RESTO =:= 0,
-			      COSIENTE =:= 1,
-		              append(HEADSOLUTION,_,Y),
-			      length(HEADSOLUTION,XLEN),
-			      unifiable(X,HEADSOLUTION,_).
+%% tienePatron(X,Y) :- length(X,XLEN),
+%% 			      length(Y,YLEN), 			      
+%% 			      divmod(YLEN,XLEN,COSIENTE,RESTO),
+%% 			      RESTO =:= 0,
+%% 			      COSIENTE =:= 1,
+%% 		              append(HEADSOLUTION,_,Y),
+%% 			      length(HEADSOLUTION,XLEN),
+%% 			      unifiable(X,HEADSOLUTION,_).
 			      
 % La siguiente funcion es para test:
 
