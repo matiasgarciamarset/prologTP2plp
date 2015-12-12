@@ -104,22 +104,6 @@ cumpleLimite(Piezas, Solucion) :- piezasALista(Piezas, A), piezasALista(Solucion
 
 %%% Ejercicio 6
 
-construirwork(0,_,[]).
-construirwork(SUMA,PIEZAS,[X|XS]) :- SUMA>0,
-				      generar2(SUMA,PIEZAS,ACTUAL,TOMO,REEMPLAZO,RESTO), 	
-				pieza(_,CANT) = REEMPLAZO, 
-				CANT =:= 0 , 
-				select(ACTUAL,PIEZAS,RESTOPIEZAS),
-				X = TOMO,
-				construirwork(RESTO,RESTOPIEZAS,XS),
-				sinPiezasIgualesContiguas([X|XS]).
-construirwork(SUMA,PIEZAS,[X|XS]) :- SUMA>0,  generar2(SUMA,PIEZAS,ACTUAL,TOMO,REEMPLAZO,RESTO), 
-				pieza(_,CANT) = REEMPLAZO, 
-				CANT > 0 , 
-				select(ACTUAL,PIEZAS,REEMPLAZO,RESTOPIEZAS),
-				X = TOMO,
-				construirwork(RESTO,RESTOPIEZAS,XS),
-				sinPiezasIgualesContiguas([X|XS]).
 
 % construir1(+Total,+Piezas,-Solución), donde Solución representa una lista de piezas cuyos valores 
 %  suman Total y, además, las cantidades utilizadas de cada pieza no exceden los declarados en Piezas.
@@ -130,23 +114,6 @@ construir1(T, P, S) :- construirwork(T, P, S2), piezasEnLista(S2,S).
 % ####################################
 
 %%% Ejercicio 7
-
-% construir2(+Total,+Piezas,-Solución), cuyo comportamiento es id ́entico a construir1/3 pero que utiliza 
-%  definiciones dinámicas para persistir los cálculos auxiliares realizados y evitar repetirlos. 
-%  No se espera que las soluciones aparezcan en el mismo orden entre construir1/3 y construir2/3, pero sí, sean las mismas.
-
-%implemente esta funcion, calcula los resultados sin duplicados. 
-% me resulto mas utiil usar las tuplas, despues para pasar a piezas es una boludez
-
-%explicacion 
-% 1 - extraigo cantidad y valor de pieza
-% 2 - tomo todos los valores entre el valor de la pieza y la suma total que quiero generar
-% 3 - divido el valor que quiero sumar, por el valor de la pieza, Eso me genera un cociente C  y un resto R 
-% 4 - valido que la division de resto 0, 
-% 5 - valido que tenga la cantidad de piezas necesarias de ese largo
-% 6 - genero la pieza, con el valor de la original P pero utilizo C piezas con ese valor
-% 7 - calculo cuanta longitud me queda cubrir
-% 8 - llamo recursivamente con las piezas de otra longitud, y para cubrir el resto de espacio que queda. 
 
 
 sinPiezasIgualesContiguas([]).
@@ -160,6 +127,7 @@ piezasEnLista([P|PS],[X|XS]) :- pieza(VAL,CANT) = P, CANT > 1 , X = VAL , CANTME
 
 construir2worker(0,_,[]). 
 construir2worker(SUMA,PIEZAS,[X|XS])  :- member(pieza(P,G),PIEZAS), 
+					 SUMA > 0,
 					       between(1,G,N),  
 					       DIFF  is G - N,
 					       SUMARESTO is SUMA-(N*P),
@@ -169,8 +137,17 @@ construir2worker(SUMA,PIEZAS,[X|XS])  :- member(pieza(P,G),PIEZAS),
  					       construir2worker(SUMARESTO,PIEZASRESTO,XS).
 
 
-dynamic con/3.
-con(S,P,L) :- construir2worker(S,P,L), sinPiezasIgualesContiguas(L), asserta(con(S,P,L) ).
+dynamic construir2dyn/3.
+construir2(S,P,L) :- current_predicate(construir2dyn/3),construir2dyn(S,P,L).
+construir2(S,P,L) :- current_predicate(construir2dyn/3),
+	      not(construir2dyn(S,P,L)), 
+	      construir2worker(S,P,L), 
+	      sinPiezasIgualesContiguas(L), 
+	      asserta(construir2dyn(S,P,L) ).
+construir2(S,P,L) :-not(current_predicate(construir2dyn/3)),
+	     construir2worker(S,P,L), 
+	     sinPiezasIgualesContiguas(L),
+	     asserta(construir2dyn(S,P,L) ).
 
 
 
@@ -192,7 +169,7 @@ todosConstruir1(T, P, Z, N):- findall(X,construir1(T,P,X),Z),  length(Z, N) .
 % todosConstruir2(+Total, +Piezas, -Soluciones, -N), donde Soluciones representa una lista con todas 
 %  las soluciones de longitud Total obtenidas con construir2/3, y N indica la cantidad de soluciones totales.
 
-todosConstruir2(T, P, Z, N) :- findall(X,con(T,P,X),Z),  length(Z, N) .
+todosConstruir2(T, P, Z, N) :- findall(X,construir2(T,P,X),Z),  length(Z, N) .
 
 
 % ####################################
@@ -208,27 +185,6 @@ construirConPatron(TOTAL,PIEZAS,PATRON,SOLUCION):- construir2(TOTAL,PIEZAS,SOLUC
 
 tienePatron(P,P).
 tienePatron(P,L) :- length(P,N), length(L,N2), not(N >= N2), append(LI,LD,L), length(LI,N), tienePatron(P,LI), tienePatron(P,LD). 
-%% tienePatron([],[]). 
-%% tienePatron(X,Y) :-           length(X,XLEN),
-%% 			      length(Y,YLEN), 			      
-%% 			      divmod(YLEN,XLEN,COSIENTE,RESTO),
-%% 			      RESTO =:= 0,
-%% 			      COSIENTE > 1,
-%% 		              append(HEADSOLUTION,TAILPATTERN,Y),
-%% 			      length(HEADSOLUTION,XLEN),
-%% 			      unifiable(X,HEADSOLUTION,_),
-%% 			      X=HEADSOLUTION,
-%% 			      tienePatron(X,TAILPATTERN).
-			      
-%% tienePatron(X,Y) :- length(X,XLEN),
-%% 			      length(Y,YLEN), 			      
-%% 			      divmod(YLEN,XLEN,COSIENTE,RESTO),
-%% 			      RESTO =:= 0,
-%% 			      COSIENTE =:= 1,
-%% 		              append(HEADSOLUTION,_,Y),
-%% 			      length(HEADSOLUTION,XLEN),
-%% 			      unifiable(X,HEADSOLUTION,_).
-			      
 % La siguiente funcion es para test:
 
 generaok(T,Z) :- findall(X,generar(T,_,X),Z) .
