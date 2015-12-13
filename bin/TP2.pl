@@ -107,7 +107,7 @@ cumpleLimite(Piezas, Solucion) :- piezasALista(Piezas, A), piezasALista(Solucion
 
 % construir1(+Total,+Piezas,-Solución), donde Solución representa una lista de piezas cuyos valores 
 %  suman Total y, además, las cantidades utilizadas de cada pieza no exceden los declarados en Piezas.
-construir1(T, P, S) :- construirwork(T, P, S2), piezasEnLista(S2,S).
+construir1(T, P, S) :- construir2worker(T, P, LC),	      sinPiezasIgualesContiguas(LC),  piezasEnLista(LC,S).
 
 % ####################################
 % Enfoque dinámico
@@ -138,16 +138,18 @@ construir2worker(SUMA,PIEZAS,[X|XS])  :- member(pieza(P,G),PIEZAS),
 
 
 dynamic construir2dyn/3.
-construir2(S,P,L) :- current_predicate(construir2dyn/3),construir2dyn(S,P,L).
+construir2(S,P,L) :- current_predicate(construir2dyn/3), construir2dyn(S,P,LC), piezasEnLista(LC,L).
 construir2(S,P,L) :- current_predicate(construir2dyn/3),
-	      not(construir2dyn(S,P,L)), 
-	      construir2worker(S,P,L), 
-	      sinPiezasIgualesContiguas(L), 
-	      asserta(construir2dyn(S,P,L) ).
+	      not(construir2dyn(S,P,_)), 
+	      construir2worker(S,P,LC), 
+	      sinPiezasIgualesContiguas(LC), 
+	      asserta(construir2dyn(S,P,LC) ),
+	      piezasEnLista(LC,L).
 construir2(S,P,L) :-not(current_predicate(construir2dyn/3)),
-	     construir2worker(S,P,L), 
-	     sinPiezasIgualesContiguas(L),
-	     asserta(construir2dyn(S,P,L) ).
+	     construir2worker(S,P,LC), 
+	     sinPiezasIgualesContiguas(LC),
+	     asserta(construir2dyn(S,P,LC) ),
+	     piezasEnLista(LC,L).
 
 
 
