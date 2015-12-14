@@ -125,31 +125,54 @@ piezasEnLista([P|PS],[X|XS]) :- pieza(VAL,CANT) = P, CANT =:= 1 , X = VAL, pieza
 piezasEnLista([P|PS],[X|XS]) :- pieza(VAL,CANT) = P, CANT > 1 , X = VAL , CANTMENOS is CANT - 1 , 
 				piezasEnLista( [ pieza(VAL,CANTMENOS) | PS] , XS).
 
-construir2worker(0,_,[]). 
-construir2worker(SUMA,PIEZAS,[X|XS])  :- member(pieza(P,G),PIEZAS), 
-					 SUMA > 0,
-					       between(1,G,N),  
-					       DIFF  is G - N,
-					       SUMARESTO is SUMA-(N*P),
-					       PRESTO = pieza(P,DIFF), 
-					       X = pieza(P,N),
-					       select( pieza(P,G),PIEZAS,PRESTO,PIEZASRESTO),
- 					       construir2worker(SUMARESTO,PIEZASRESTO,XS).
-
 
 dynamic construir2dyn/3.
-construir2(S,P,L) :- current_predicate(construir2dyn/3), construir2dyn(S,P,LC), piezasEnLista(LC,L).
-construir2(S,P,L) :- current_predicate(construir2dyn/3),
-	      not(construir2dyn(S,P,_)), 
-	      construir2worker(S,P,LC), 
-	      sinPiezasIgualesContiguas(LC), 
-	      asserta(construir2dyn(S,P,LC) ),
-	      piezasEnLista(LC,L).
-construir2(S,P,L) :-not(current_predicate(construir2dyn/3)),
-	     construir2worker(S,P,LC), 
-	     sinPiezasIgualesContiguas(LC),
-	     asserta(construir2dyn(S,P,LC) ),
-	     piezasEnLista(LC,L).
+
+construir2worker(0,_,[]). 
+construir2worker(SUMA,PIEZAS,LC) :- current_predicate(construir2dyn/3), construir2dyn(SUMA,PIEZAS,LC).
+construir2worker(SUMA,PIEZAS,[X|XS])  :- (not(current_predicate(construir2dyn/3));
+					  not(construir2dyn(SUMA,PIEZAS,_))),
+					 member(pieza(P,G),PIEZAS), 
+					 SUMA > 0,
+					 between(1,G,N),  
+					 DIFF  is G - N,
+					 SUMARESTO is SUMA-(N*P),
+					 PRESTO = pieza(P,DIFF), 
+					 X = pieza(P,N),
+					 select( pieza(P,G),PIEZAS,PRESTO,PIEZASRESTO),
+ 					 construir2worker(SUMARESTO,PIEZASRESTO,XS),
+					 sinPiezasIgualesContiguas([X|XS]), 
+					 asserta(construir2dyn(SUMA,PIEZAS,[X|XS]) ).
+
+
+%% construir2worker(SUMA,PIEZAS,[X|XS])  :- member(pieza(P,G),PIEZAS), 
+%% 					 SUMA > 0,
+%% 					 between(1,G,N),  
+%% 					 DIFF  is G - N,
+%% 					 SUMARESTO is SUMA-(N*P),
+%% 					 PRESTO = pieza(P,DIFF), 
+%% 					 X = pieza(P,N),
+%% 					 select( pieza(P,G),PIEZAS,PRESTO,PIEZASRESTO),
+%%  					 construir2worker(SUMARESTO,PIEZASRESTO,XS)
+
+
+
+construir2(S,P,L) :- retractall(construir2dyn(_,_,_)),
+		     construir2worker(S,P,LC),
+		     piezasEnLista(LC,L).
+
+%% 		     current_predicate(construir2dyn/3), construir2dyn(S,P,LC), piezasEnLista(LC,L).
+%% construir2(S,P,L) :- current_predicate(construir2dyn/3),
+%% 	      not(construir2dyn(S,P,_)), 
+%% 	      construir2worker(S,P,LC), 
+%% 	      sinPiezasIgualesContiguas(LC), 
+%% 	      asserta(construir2dyn(S,P,LC) ),
+%% 	      piezasEnLista(LC,L).
+%% construir2(S,P,L) :-not(current_predicate(construir2dyn/3)),
+%% 	     construir2worker(S,P,LC), 
+%% 	     sinPiezasIgualesContiguas(LC),
+%% 	     asserta(construir2dyn(S,P,LC) ),
+%% 	     piezasEnLista(LC,L).
 
 
 
